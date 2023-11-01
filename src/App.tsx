@@ -1,16 +1,17 @@
 /** @jsxImportSource @emotion/react */
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 import { Global, css } from "@emotion/react";
 import { globalDarkStyles, globalLightStyles } from "./theme";
 
-import HeaderCS from "./components/HeaderCS";
+import LoadingCS from "./components/LoadingCS";
 import { useEffect } from "react";
+
+const appContainer = css``;
 const darkModeBtnContainer = css`
   width: 108px;
   text-align: center;
 `;
-
 const darkModeBtn = css`
   width: 96px;
   height: 32px;
@@ -40,6 +41,7 @@ const darkModeBtnCircle = (darkModeState: boolean) => css`
 
 function App(): JSX.Element {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const loadingRef = useRef<HTMLDivElement>(null);
 
   const toggleTheme = () => {
     setIsDarkMode((prevMode) => {
@@ -48,6 +50,13 @@ function App(): JSX.Element {
     });
   };
   useEffect(() => {
+    const loadingComponent = setTimeout(() => {
+      // loadingRef.current.style.display = "none";
+      if (loadingRef.current) {
+        loadingRef.current.style.display = "none";
+      }
+    }, 6000);
+
     const hasDarkModeState = localStorage.getItem("hasDarkModeState");
     if (hasDarkModeState) {
       return JSON.parse(hasDarkModeState) === false
@@ -62,18 +71,21 @@ function App(): JSX.Element {
         localStorage.setItem("hasDarkModeState", JSON.stringify(isDarkMode));
       }
     }
+    return () => {
+      clearTimeout(loadingComponent);
+    };
   }, []);
 
   return (
-    <div className="App">
+    <div css={appContainer}>
       <Global styles={isDarkMode ? globalLightStyles : globalDarkStyles} />
+      <LoadingCS ref={loadingRef} />
       <div css={darkModeBtnContainer}>
         <div>{isDarkMode ? "LightMode" : "DarkMode"}</div>
         <button css={darkModeBtn} onClick={toggleTheme}>
           <div css={darkModeBtnCircle(isDarkMode)}></div>
         </button>
       </div>
-      <HeaderCS />
     </div>
   );
 }
