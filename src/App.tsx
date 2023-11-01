@@ -6,6 +6,37 @@ import { globalDarkStyles, globalLightStyles } from "./theme";
 
 import HeaderCS from "./components/HeaderCS";
 import { useEffect } from "react";
+const darkModeBtnContainer = css`
+  width: 108px;
+  text-align: center;
+`;
+
+const darkModeBtn = css`
+  width: 96px;
+  height: 32px;
+
+  border: 1px solid gray;
+  border-radius: 24px;
+
+  margin-top: 4px;
+  padding: 4px;
+
+  cursor: pointer;
+
+  background-color: #b1b4bd;
+`;
+const darkModeBtnCircle = (darkModeState: boolean) => css`
+  width: 24px;
+  height: 24px;
+
+  border: 1px solid #b1b4bd;
+  border-radius: 50%;
+
+  transform: translateX(${darkModeState ? "0" : "250"}%);
+  transition: transform 0.5s;
+
+  background-color: #f8f9fb; // #171316
+`;
 
 function App(): JSX.Element {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -35,9 +66,13 @@ function App(): JSX.Element {
 
   return (
     <div className="App">
-      <button onClick={toggleTheme}>Toggle Theme</button>
-
       <Global styles={isDarkMode ? globalLightStyles : globalDarkStyles} />
+      <div css={darkModeBtnContainer}>
+        <div>{isDarkMode ? "LightMode" : "DarkMode"}</div>
+        <button css={darkModeBtn} onClick={toggleTheme}>
+          <div css={darkModeBtnCircle(isDarkMode)}></div>
+        </button>
+      </div>
       <HeaderCS />
     </div>
   );
